@@ -38,6 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+ADDED_APPS = [ 'Products',
+              'Accounts'
+
+]
+
+INSTALLED_APPS += ADDED_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'food_order_web.urls'
+ROOT_URLCONF = 'Food_ordering_web.urls'
 
 TEMPLATES = [
     {
@@ -67,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'food_order_web.wsgi.application'
+WSGI_APPLICATION = 'Food_ordering_web.wsgi.application'
 
 
 # Database
