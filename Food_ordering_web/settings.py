@@ -39,8 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
-ADDED_APPS = [ 'Products',  
-              'Accounts'
+ADDED_APPS = [
+            'Food_ordering_web', 
+            'Products',  
+            'Accounts',
+            'Cart',
 
 
 ]
