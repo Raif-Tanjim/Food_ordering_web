@@ -1,28 +1,82 @@
 {% extends 'base.html' %}
+{%block title%}Product_Info{%endblock%}
+
 {%block content%}
-    <div class = "columns is-multiline">
-        {% for product in products%}
-        <div class= "column is-3">
-            <div class="card">
-                <div class="card-content">
-                    <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">{{product.title}}</p>
-                            <p class='description is-3'>{{product.product_description}}</p>
-                            <p class="subtitle is-6">{{product.product_price}}</p>
-                        </div>
-                    </div>
-                </div>
+<div id="productapp">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            {% if product.category.parent %}
+                <li><a href="{% url 'category_detail' product.category.parent.slug %}">{{ product.category.parent.title }}</a></li>
+            {% endif %}
+            <li><a href="{% url 'category_detail' product.category.slug %}">{{ product.category.title }}</a></li>
+            <li class="is-active"><a href="{% url 'Product_details_view' product.category.slug product.slug %}">{{ product.title }}</a></li>
+        </ul>
+    </nav>
 
-                            <footer class="card-footer">
-                             <a href="#" class="card-footer-item"> View</a>
-                               </footer>
-                
-                      
-            </div>
+    <div class="columns">
+        <div class="column is-4">
+            <figure class="image is-4by3">
+                <img :src="mainImage">
+            </figure>
         </div>
-        {% endfor %}
     </div>
+    <hr>
+    <h1 class="title">{{ product.title }}</h1>
+    <h2 class="subtitle">${{ product.product_price }}, Stars: {% if product.get_rating == 0 %}No ratings yet{% else %}
+        {{ product.get_rating|floatformat:1 }}{% endif %}</h2>
 
+    {% if product.description %}
+        <p>{{ product.description }}</p>
+    {% endif %}
+    <button @click="addtocart({{product.id}})">Add to Cart</button>
+
+</div>
+{%endblock%}
+
+{%block scripts%}
+<script>
+    var productapp= new Vue({
+        el : '#productapp',
+        data(){
+
+            return{
+
+
+            }
+
+        },
+        methods: {
+            addtocart(product_id){
+                console.log('working');
+                var data = {
+                    'product_id': product_id,
+                    'update': false,
+                    'quantity': 1,
+
+                };
+                fetch('/Products/api/api_add_to_cart/', {  // Note the leading slash
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{csrf_token}}'
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log('Error:', error);
+                });
+                
+            }
+        },
+
+ });
+
+
+</script>
 
 {%endblock%}

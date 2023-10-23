@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{%block title%}Cart{%endblock%}
+{%block content%}
+<div id="cartapp">
+        <h1  class="title is-6">Cart</h1>
+{% if cart %}
+<div class="table">
+<table>
+    <thead>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total Price</th>
+    </thead>
+    <tbody>
+               
+        <tr v-for="product in products" >
+            <td>[[product.title]]</td>
+            <td>[[product.product_price]]</td>
+            <td>[[product.quantity]] <button @click="Incrementquantity(product.id, product.quantity,product.product_price)">+</button><button @click="Reducequantity(product.id, product.quantity, product.product_price)">-</button></td>
+            <td>[[product.Total_price]]</td>
+<td>        <button @click="removeproduct(product.id)">Remove Item</button> 
+</td>
+        </tr>
+    </tbody>
+</table>
+
+
+</div>
+{% endif %}
+</div>
+ {%endblock%}
+
+{%block scripts%}
+<script>
+    var productapp= new Vue({
+        el : '#cartapp',
+        delimiters: ['[[',']]'],
+        data() {
+            return {
+                products: JSON.parse('{{ productsstring|safe }}')
+            }
+        },
+        mounted(){
+            console.log('sdsad')
+        },
+        methods: {
+         removeproduct(product_id){
+                console.log('working');
+                var data = {
+                    'product_id': product_id,
+
+                };
+                fetch('/Products/api/api_remove_from_cart/', {  // Note the leading slash
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{csrf_token}}'
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    console.log(response)
+                    this.products = this.products.filter(product => product.id !== product_id)
+                })
+                .catch(function (error) {
+                    console.log('Error:', error);
+                });
+            },
+            Incrementquantity(product_id, quantity,product_price){
+                var data= {
+                    'product_id': product_id,
+                    'update': true,
+                    'quantity': parseInt(quantity) + 1,
+                    'product_price':product_price,
+
+                }; 
+                
+                fetch('/Products/api/api_add_to_cart/', {  // Note the leading slash
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{csrf_token}}'
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    console.log(response)
+                    for (var i = 0; i < this.products.length; i++) {
+                        var product = this.products[i];
+
+                        if (product.id === product_id) {
+                            this.products[i].quantity = parseInt(this.products[i].quantity) + 1;
+                            this.products[i].Total_price = parseInt(this.products[i].quantity) * parseFloat(this.products[i].product_price)
+                        }
+                    }
+                    
+                })
+                .catch(function (error) {
+                    console.log('Error:', error);
+                });
+
+
+            },
+            Reducequantity(product_id, quantity, product_price){
+                var data= {
+                    'product_id': product_id,
+                    'update': true,
+                    'quantity': parseInt(quantity) - 1,
+                    'product_price':product_price,
+
+
+
+                }; 
+                
+                fetch('/Products/api/api_add_to_cart/', {  // Note the leading slash
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{csrf_token}}'
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    console.log(response)
+                    for (var i = 0; i < this.products.length; i--) {
+                        var product = this.products[i];
+
+                        if (product.id === product_id) {
+                            this.products[i].quantity = parseInt(this.products[i].quantity) - 1;
+                            this.products[i].Total_price = parseInt(this.products[i].quantity) * parseFloat(this.products[i].product_price)
+                        }
+                    }
+                    
+                })
+                .catch(function (error) {
+                    console.log('Error:', error);
+                });
+                
+            }
+        }
+});
+        
+</script>
+
+    
+
+{%endblock%}

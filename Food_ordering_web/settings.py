@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SESSION_COOKIE_AGE = 8640
+CART_SESSION_ID = 'cart'
 
 
 # Application definition
@@ -50,7 +52,7 @@ ADDED_APPS = [
 
 INSTALLED_APPS += ADDED_APPS
 
-AUTH_USER_MODEL =   'Accounts.CustomUser'
+AUTH_USER_MODEL = 'Accounts.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,6 +76,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Products.context_processors.menu_categories',
+
             ],
         },
     },
