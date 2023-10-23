@@ -23,6 +23,12 @@
 </td>
         </tr>
     </tbody>
+    <tfoot>
+        <tr>
+            <td>Total Cost-</td>
+            <td>{{cart.get_total_cost}}</td>
+        </tr>
+    </tfoot>
 </table>
 
 
@@ -36,13 +42,14 @@
     var productapp= new Vue({
         el : '#cartapp',
         delimiters: ['[[',']]'],
+        store: store,
         data() {
             return {
                 products: JSON.parse('{{ productsstring|safe }}')
             }
         },
         mounted(){
-            console.log('sdsad')
+            console.log('mounted')
         },
         methods: {
          removeproduct(product_id){
@@ -51,6 +58,7 @@
                     'product_id': product_id,
 
                 };
+                
                 fetch('/Products/api/api_remove_from_cart/', {  // Note the leading slash
                     method: 'POST',
                     headers: {
@@ -76,6 +84,7 @@
                     'product_price':product_price,
 
                 }; 
+                store.commit('increment', 1);
                 
                 fetch('/Products/api/api_add_to_cart/', {  // Note the leading slash
                     method: 'POST',
@@ -114,6 +123,9 @@
 
 
                 }; 
+                
+                store.commit('increment', -1);
+
                 
                 fetch('/Products/api/api_add_to_cart/', {  // Note the leading slash
                     method: 'POST',

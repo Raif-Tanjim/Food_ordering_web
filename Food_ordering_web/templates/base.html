@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -10,6 +11,8 @@
         <link rel="stylesheet" href="">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+        <link rel="stylesheet" href="{% static 'main.css'%}">
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -17,7 +20,7 @@
     </head>
     <body>
         
-        <nav  class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav id="navbar"  class="navbar navbar-expand-lg navbar-light ">
             <a class="navbar-brand" href="/">FoodHub</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -55,8 +58,8 @@
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search-Food</button>
               </form>  
-              <div  class= "nav-item">
-                <a href="{% url 'cart'%}" class="button is-primary">Cart</a>
+              <div  class= "nav-item" id="navcart" data_cart_item="{{cart.get_total_length}}">
+                <a href="{% url 'cart'%}" class="button is-primary">Cart ([[ numItems ]]) </></a>
               </div>
 
             </div>
@@ -94,10 +97,48 @@
       
     
     <footer class='footer'>Happy ordering</footer>
-          <script>src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"</script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex@4.1.0/dist/vuex.global.js"></script>
+    
+      <script>
+        
+       // In your JavaScript code
+    Vue.use(Vuex);
+
+    var store = new Vuex.Store({
+      state: {
+        numItems: 0
+      },
+      mutations: {
+        increment(state, quantity) {
+          document.querySelector('#navcart').setAttribute('data-cart-item', state.numItems);
+          state.numItems += quantity;
+          // Update the data-cart-item attribute when the state changes
+          
+
+        }
+      }
+    });
+
+    var navcart = new Vue({
+      el: '#navcart',
+      delimiters: ['[[', ']]'],
+      store: store,
+      computed: {
+        numItems: function () {
+          return store.state.numItems;
+        }
+      }
+    });
+
+      
+      </script>
+   
+   
     {%block scripts%}
 
    {%endblock%}
+  
     
   </body>
 </html>

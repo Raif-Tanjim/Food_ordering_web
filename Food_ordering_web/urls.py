@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
 from Products.views import *
 from Accounts.views import *
@@ -36,4 +38,4 @@ urlpatterns = [
 #Api
     path('Products/api/api_add_to_cart/',api_add_to_cart , name='api_add_to_cart'),
     path('Products/api/api_remove_from_cart/',api_remove_from_cart,name='api_remove_from_cart') ,
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

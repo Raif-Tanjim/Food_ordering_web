@@ -4,7 +4,7 @@ from Products.models import *
 
 def home(request):
     products = Product.objects.filter(is_featured =True)
-    context = {'products': products}
+    context = {'products': products,}
     return render(request, 'home.html', context)
 
 

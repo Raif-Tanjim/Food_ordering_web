@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils.text import slugify
 from django.urls import reverse
+from io import BytesIO
+from PIL import Image
+from django.core.files import File
 
 class Category(models.Model):
     """
@@ -49,14 +52,28 @@ class Product(BaseModel):
     product_description = models.TextField(blank=True, null=True)
     product_price = models.FloatField(default=1)
     is_featured = models.BooleanField(default=False)
+    image = models.ImageField(upload_to='uploads', null=True,blank=True)
+    thumbnail= models.ImageField(upload_to='clsuploads', null=True,blank=True)
+    date_added = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ('-date_added',)
 
     def __str__(self):
         return self.title
-
+    
+    def make_thumbnail(self, image, size=(300,200)):
+        img=Image.open(image)
+        img.convert('RGB')
+        img.thumbnail(size)
+        
+        thumb_io=BytesIO()
+        img.save(thumb_io,'JPEG',quality=85)
+        thumbnail= File(thumb_io,name= image.name)
+        return thumbnail
+        
     def save(self, *args, **kwargs):
+        self.thumbnail= self.make_thumbnail(self.image)
         # Generate a slug from the title when saving the object
         if not self.slug:
             self.slug = slugify(self.title)
