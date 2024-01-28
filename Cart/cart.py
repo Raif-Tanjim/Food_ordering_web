@@ -50,8 +50,11 @@ class Cart(object):
             print(product_id)
             del self.cart[product_id]
             self.save()
-                    
-        
+            
+    def clear(self ):
+        del self.session[settings.CART_SESSION_ID]
+        self.session.modified = True
+
     def save(self):
         self.session[settings.CART_SESSION_ID]= self.cart  
         self.session.modified = True
@@ -59,6 +62,11 @@ class Cart(object):
     def get_total_length(self):
     
         return sum(int(item['quantity']) for item in self.cart.values())
+    
     def get_total_cost(self):
         
-        return  sum(float(item['Total_price']) for item in self.cart.values())
+        if "Total_price" in self.cart.values():
+            return sum(float(item.get('Total_price', 0)) for item in self.cart.values())
+        else:
+            return 0
+    

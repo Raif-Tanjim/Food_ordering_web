@@ -17,21 +17,27 @@
     <div class="columns">
         <div class="column is-4">
             <figure class="image is-4by3">
-                <img src="/media/uploads/{{product.image}}">
+                <img src="/media/{{product.image}}">
             </figure>
         </div>
     </div>
     <hr>
     <h1 class="title">{{ product.title }}</h1>
-    <h2 class="subtitle">${{ product.product_price }}, Stars: {% if product.get_rating == 0 %}No ratings yet{% else %}
+    <h2 class="subtitle">Bdt:{{ product.product_price }}, Stars: {% if product.get_rating == 0 %}No ratings yet{% else %}
         {{ product.get_rating|floatformat:1 }}{% endif %}</h2>
 
-    {% if product.description %}
-        <p>{{ product.description }}</p>
+    {% if product.product_description %}
+        <p>{{ product.product_description }}</p>
     {% endif %}
-    <button @click="addtocart({{product.id}})">Add to Cart</button>
+    <button @click="addtocart({{product.id}},{{product.product_price}})">Add to Cart</button>
 
+     <article class="message is-success" v-if="show_message" >
+      <div class="message-body">
+        This Product was successfully added to your cart !!
+      </div>
+    </article>
 </div>
+
 {%endblock%}
 
 {%block scripts%}
@@ -42,23 +48,26 @@
         data(){
 
             return{
-
+                    show_message : false
 
             }
 
         },
         methods: {
-            addtocart(product_id){
+            addtocart(product_id, product_price){
                 console.log('working');
                 var data = {
                     'product_id': product_id,
                     'update': false,
                     'quantity': 1,
+                    'product_price': product_price
 
                 };
                 store.commit('increment', 1);
+                store.commit('change_total_cost', parseFloat(product_price));
 
-                fetch('/Products/api/api_add_to_cart/', {  // Note the leading slash
+
+                fetch('/Products/api/api_add_to_cart', {  // Note the leading slash
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -69,6 +78,11 @@
                 })
                 .then((response) => {
                     console.log(response);
+                    this.show_message = true
+
+                    setTimeout(()=> {
+                        this.show_message = false
+                    }, 2000)
                 })
                 .catch(function (error) {
                     console.log('Error:', error);

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="post" action="{% url 'login' %}">
+  {% csrf_token %}
+  
+  <div class="form-group">
+    <label>Select login type:</label>
+    <div class="custom-control custom-switch">
+      <input type="checkbox" class="custom-control-input" id="login_type_toggle" name="login_type" value="email">
+      <label class="custom-control-label" for="login_type_toggle" id="login_type_label">Email</label>
+    </div>
+  </div>
+  
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="username_or_email" id="username_or_email_label">Username</label>
+      <input type="text" class="form-control" id="username_or_email" name="username_or_email" placeholder="Enter Username">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputPassword">Password</label>
+      <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password">
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Log-in</button>
+</form>
+
+<script>
+  const toggleSwitch = document.getElementById('login_type_toggle');
+  toggleSwitch.addEventListener('change', function () {
+    const labelLoginType = document.querySelector('#login_type_label');
+    const labelUsernameOrEmail = document.querySelector('#username_or_email_label');
+    const inputUsernameOrEmail = document.querySelector('#username_or_email');
+
+    if (toggleSwitch.checked) {
+      labelLoginType.textContent = 'Email';
+      labelUsernameOrEmail.textContent = 'Email';
+      inputUsernameOrEmail.placeholder = 'Enter Email';
+    } else {
+      labelLoginType.textContent = 'Username';
+      labelUsernameOrEmail.textContent = 'Username';
+      inputUsernameOrEmail.placeholder = 'Enter Username';
+    }
+  });
+</script>
+
+{% endblock %}

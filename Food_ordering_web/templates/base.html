@@ -4,11 +4,11 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-         <title>{%block title%}---FoodHub---{%endblock%}</title>
+         <title >{%block title%}---FoodHub---{%endblock%}</title>
          
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="#">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
         <link rel="stylesheet" href="{% static 'main.css'%}">
@@ -20,7 +20,7 @@
     </head>
     <body>
         
-        <nav id="navbar"  class="navbar navbar-expand-lg navbar-light ">
+        <nav class="navbar navbar-expand-lg" id="navcart">
             <a class="navbar-brand" href="/">FoodHub</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -29,10 +29,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                  <a class="nav-link" href="/admin/">Profile</a>
+                  <a class="nav-link" href="/login">Profile</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="/product/">Products</a>
+                  <a class="nav-link" href="/product">Products</a>
                 </li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -50,7 +50,7 @@
                 
                 {%if user.is_authenticated %}
                 <li class="nav-item">
-                  <a class="nav-link disabled" href="/logout/">Log-out</a>
+                  <a class="nav-link disabled" href="{% url 'logout'%}">Log-out</a>
                 </li>
                 {% endif%}
               </ul>
@@ -58,7 +58,10 @@
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search-Food</button>
               </form>  
-              <div  class= "nav-item" id="navcart" data_cart_item="{{cart.get_total_length}}">
+
+
+              
+              <div  class= "nav-item"  data_cart_item="{{cart.get_total_length}}" total_cost_item="{{cart.get_total_cost}}">
                 <a href="{% url 'cart'%}" class="button is-primary">Cart ([[ numItems ]]) </></a>
               </div>
 
@@ -73,26 +76,27 @@
         {%endblock%}
         <script src="" async defer></script>
 
-        <nav class="navbar navbar-expand-lg navbar-light">
+        <nav class="navbar2">
           <!-- Your other navigation items go here -->
       
-          <!-- Add a spacer to push the dropdown to the right -->
-          <div class="ml-auto"></div>
-      
-          <ul class="navbar-nav">
-              <li class="nav-item dropdown dropup">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Need Help?
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="/about/">About us</a>
-                      <a class="dropdown-item" href=""></a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">report-problem</a>
-                  </div>
-              </li>
-          </ul>
+          <!-- Use "ml-auto" to push the dropdown to the right -->
+          <div class="ml-auto">
+              <ul class="navbar-nav">
+                  <li class="nav-item dropdown dropup">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Need Help?
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                          <a class="dropdown-item" href="/about">About us</a>
+                          <a class="dropdown-item" href="#">Your Other Menu Item</a> <!-- Add your menu item here -->
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="#">report-problem</a>
+                      </div>
+                  </li>
+              </ul>
+          </div>
       </nav>
+      
       
       
     
@@ -100,39 +104,49 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuex@4.1.0/dist/vuex.global.js"></script>
     
-      <script>
-        
-       // In your JavaScript code
-    Vue.use(Vuex);
-
-    var store = new Vuex.Store({
-      state: {
-        numItems: 0
-      },
-      mutations: {
-        increment(state, quantity) {
-          document.querySelector('#navcart').setAttribute('data-cart-item', state.numItems);
-          state.numItems += quantity;
-          // Update the data-cart-item attribute when the state changes
-          
-
+    <script>
+      Vue.use(Vuex);
+  
+      var store = new Vuex.Store({
+        state: {
+          numItems: 0,
+          total_cost: 0,
+        },
+        mutations: {
+          increment(state, quantity) {
+            document.querySelector('#navcart').setAttribute('data-cart-item', state.numItems);
+            state.numItems += quantity;
+            // Update the data-cart-item attribute when the state changes
+            // Save the state to local storage
+            localStorage.setItem('cart_state', JSON.stringify(state));
+          },
+          change_total_cost(state, new_cost) {
+            document.querySelector('#navcart').setAttribute('total_cost_item', state.total_cost);
+            state.total_cost += new_cost;
+            // Save the state to local storage
+            localStorage.setItem('cart_state', JSON.stringify(state));
+          }
         }
+      });
+  
+      // Load the state from local storage if it exists
+      var savedState = localStorage.getItem('cart_state');
+      if (savedState) {
+        store.replaceState(JSON.parse(savedState));
       }
-    });
-
-    var navcart = new Vue({
-      el: '#navcart',
-      delimiters: ['[[', ']]'],
-      store: store,
-      computed: {
-        numItems: function () {
-          return store.state.numItems;
+  
+      var navcart = new Vue({
+        el: '#navcart',
+        delimiters: ['[[', ']]'],
+        store: store,
+        computed: {
+          numItems: function () {
+            return store.state.numItems;
+          }
         }
-      }
-    });
-
-      
-      </script>
+      });
+  </script>
+  
    
    
     {%block scripts%}

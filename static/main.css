@@ -1,8 +1,20 @@
 body {
 
-    background: slategrey;
+    background: beige;
 }
 nav.navbar{
-    background: blanchedalmond;
+    background: silver;
 
 }
+nav.navbar2{
+    background: black;
+    display: flex;
+    justify-content: flex-end;
+    
+}
+.navbar-toggler {
+    background-color: transparent; /* Set background color to transparent */
+    border: 1px solid white; /* Add a border */
+    color: white; /* Set text color to white */
+}
+

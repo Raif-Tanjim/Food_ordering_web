@@ -1,6 +1,8 @@
 import json
+from django.conf import settings
 from django.shortcuts import render
 from .cart import Cart
+from order.models import Order
 
 # Create your views here.
 
@@ -21,6 +23,14 @@ def cart_details(request):
 
     context = {
         'cart': cart,
+        'pub_key':settings.STRIPE_API_KEY_PUBLISHABLE ,
         'productsstring': json.dumps(products)  # Convert the list of dictionaries to a JSON array
     }
     return render(request, 'cart.html', context)
+ 
+def success(request):
+    cart = Cart(request)
+
+    cart.clear()
+
+    return render(request,  'success.html')

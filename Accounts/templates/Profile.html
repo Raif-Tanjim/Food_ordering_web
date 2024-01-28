@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card">
+            {% if user.user_img %}
+            <img src="{{ user.user_img.url }}" alt="User Image">
+          {% else %}
+            <p>No profile image available</p>
+          {% endif %}
+          
+          <div class="card-body">
+            <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+            <p class="card-text">{{ user.Email }}</p>
+            <p class="card-text">{{ user.number }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <h2>Profile Information</h2>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th scope="row">First Name:</th>
+              <td>{{ user.first_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Last Name:</th>
+              <td>{{ user.last_name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Email:</th>
+              <td>{{ user.Email }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Phone Number:</th>
+              <td>{{ user.number }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Address:</th>
+              <td>{{ user.Address }}</td>
+            </tr>
+            <tr>
+              <th scope="row">City:</th>
+              <td>{{ user.city }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+  </form>
+  
+{% endblock %}

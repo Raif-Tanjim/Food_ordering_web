@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+STRIPE_API_KEY_PUBLISHABLE = "pk_test_51OFPbPE5LUOfNj8J60mYk7CrOUjrO9u4QSt8KkEUD2iRCrldWpiwLAlyp4p31EfvzIooCxkJN2eLyCMB7Q4XrLuY00vRxm51mr"
+STRIPE_API_KEY_HIDDEN= "sk_test_51OFPbPE5LUOfNj8JCagE4zAJTnSxtWoG203HZeVTgGtoygrLkhXHymsl7xQnmGgdDdk79XUwLWOn16AdbTgUZWxs00SdZUM4Za"
 from pathlib import Path
 import os
 
@@ -47,11 +48,18 @@ ADDED_APPS = [
             'Products',  
             'Accounts',
             'Cart',
+            'order',
+            'coupon',
 
 
 ]
 
 INSTALLED_APPS += ADDED_APPS
+
+AUTHENTICATION_BACKENDS = [
+    'Food_ordering_web.authentication_backends.CustomUserAuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 AUTH_USER_MODEL = 'Accounts.CustomUser'
 
@@ -78,6 +86,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'Products.context_processors.menu_categories',
+                'Cart.context_processors.cart',
+
 
             ],
         },
